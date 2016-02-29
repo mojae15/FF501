@@ -5,5 +5,6 @@ public class Element {
 	public Element(int i, Object o){
 		this.key = i;
 		this.data  = o;
+		
 	}
 }

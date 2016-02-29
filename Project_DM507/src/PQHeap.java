@@ -57,6 +57,7 @@ public class PQHeap implements PQ{
 		while (i <= 1 && A.get(Parent(i)) >= A.get(i)){
 			Collections.swap(A, i, Parent(i));
 			i = Parent(i);
+			
 		}
 	}
 	
