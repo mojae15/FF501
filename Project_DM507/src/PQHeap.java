@@ -2,67 +2,89 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class PQHeap implements PQ{
-	
+
+	public ArrayList<Element> Queue; //this is the queue
+
+	public PQHeap(int MaxElements){								//constructor
+		synchronized (this){
+			this.Queue = new ArrayList<>(MaxElements);
+		}
+	}
+
 	@Override
 	public Element extractMin() {
 		// TODO Auto-generated method stub
+		try{
+			Queue.remove(0);
+		}catch(ArrayIndexOutOfBoundsException k){System.out.println("No elements in queue");}
 		return null;
 	}
 
 	@Override
 	public void insert(Element e) {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	public static void main(String[] args){
-		
+		final int temp = Queue.size();
+		try{
+			synchronized (this){
+				Queue.add(temp, e);
+			}
+		}catch(ArrayIndexOutOfBoundsException k){
+			System.out.println("The queue can not hold any more elements");
+		}
+
 	}
 
-	public static void Min_heapify(ArrayList<Integer> A, int i){
+
+
+	public static void Min_heapify(ArrayList<Element> A, int i){ //changed <Integer> to <Element>
 		int l = Left(i);
 		int r = Rigth(i);
-		int largest;
-		if (l > A.size() && A.get(l) <= A.get(i)) {
-			largest = l;
+		int smallest;
+		if (l < A.size() && A.get(l).key <= A.get(i).key) { //skift maaske til l < A.size()
+			smallest = l;
 		}
 		else {
-			largest = i;
+			smallest = i;
 		}
-		if (r > A.size() && A.get(r) <= A.get(largest)) {
-			largest = r;
+		if (r < A.size() && A.get(r).key <= A.get(smallest).key) { //skift maaske til r < A.size()
+			smallest = r;
 		}
-		if (largest != i) {
-			Collections.swap(A, i, largest);
-			Min_heapify(A, largest);
+		if (smallest != i) {
+			Collections.swap(A, i, smallest);
+			Min_heapify(A, smallest);
 		}
 	}
 	
-	public static int Heap_Extract_Min(ArrayList<Integer> A) throws Exception{
-		if (A.size() >= 1) {
+	private static Element Heap_Extract_Min(ArrayList<Element> A) throws Exception{  //changed <Integer> to <Element>
+		if (A.size() <= 1) {								//skift maaske til A.size() <= 1
 			throw new Exception("Heap underflow");
 		}
-		int max = A.get(0);
-		A.set(1, A.size());
+		Element min = A.get(0);
+		Element max = A.get(A.size()-1);
+		A.set(0, max);
 		A.remove(A.size()-1);
-		Min_heapify(A, 1);
-		return max;
+		Min_heapify(A, 0);
+		return min;
 	}
 	
-	public static void Heap_Increase_Key(ArrayList<Integer> A, int i, int key) throws Exception{
-		if (key >= A.get(i)) {
+	private static void Heap_Increase_Key(ArrayList<Element> A, int i, int key) throws Exception{
+		if (key <= A.get(i).key) {
 			throw new Exception("New key smaller than current key");
 		}
-		A.set(i, key);
-		while (i <= 1 && A.get(Parent(i)) >= A.get(i)){
+		A.get(i).key = key;
+		while (i >= 1 && A.get(Parent(i)).key >= A.get(i).key){				//skift maaske til i >= 1
 			Collections.swap(A, i, Parent(i));
 			i = Parent(i);
 		}
 	}
 	
-	public static void Min_Heap_Insert(ArrayList<Integer> A, int key){
-		int temp = A.size()+1;
-		A.set(temp, Integer.MIN_VALUE);
+	private static void Min_Heap_Insert(ArrayList<Element> A, int key){
+		int temp = A.size();					//lav maaske om til blot temp = A.size(), da arraylist er nul-indekseret
+		try{
+			A.get(temp).key= Integer.MIN_VALUE;
+		}catch(ArrayIndexOutOfBoundsException k){
+			System.out.println("The queue can not hold any more elements");
+		}
 		try {
 			Heap_Increase_Key(A, temp, key);
 		} catch (Exception e) {
@@ -71,15 +93,15 @@ public class PQHeap implements PQ{
 		}
 	}
 	
-	public static int Parent(int i){
+	private static int Parent(int i){
 		return i/2;
 	}
 	
-	public static int Left(int i){
+	private static int Left(int i){
 		return 2*i;
 	}
 	
-	public static int Rigth(int i){
+	private static int Rigth(int i){
 		return (2*i)+1;
 	}
 }
