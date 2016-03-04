@@ -15,7 +15,8 @@ public class PQHeap implements PQ{
 	public Element extractMin() {
 		// TODO Auto-generated method stub
 		try{
-			Queue.remove(0);
+			System.out.println(Queue.get(Queue.size()-1).key);
+			Queue.remove(Queue.size()-1);
 		}catch(ArrayIndexOutOfBoundsException k){System.out.println("No elements in queue");}
 		return null;
 	}
@@ -34,11 +35,15 @@ public class PQHeap implements PQ{
 
 	}
 
-
+	public static void build_Min_Heap(ArrayList<Element> A){
+		for(int i = (int)Math.floor(A.size()-1); i>=0; i--){
+			Min_heapify(A, i);
+		}
+	}
 
 	public static void Min_heapify(ArrayList<Element> A, int i){ //changed <Integer> to <Element>
 		int l = Left(i);
-		int r = Rigth(i);
+		int r = Right(i);
 		int smallest;
 		if (l < A.size() && A.get(l).key <= A.get(i).key) { //skift maaske til l < A.size()
 			smallest = l;
@@ -93,15 +98,15 @@ public class PQHeap implements PQ{
 		}
 	}
 	
-	private static int Parent(int i){
-		return i/2;
+	private static int Parent(int i){				//rettet til
+		return (int)Math.ceil(i/2)-1;
 	}
 	
 	private static int Left(int i){
-		return 2*i;
+		return (int)Math.ceil(2*i)+1;
 	}
 	
-	private static int Rigth(int i){
-		return (2*i)+1;
+	private static int Right(int i){
+		return (int)Math.ceil((2*i)+2);
 	}
 }
