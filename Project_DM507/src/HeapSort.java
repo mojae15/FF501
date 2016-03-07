@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -42,12 +43,12 @@ public class HeapSort {
     
     public static void main(String[] args){
     	ArrayList<Integer> numbers = new ArrayList<>();
-        scan = new Scanner(System.in);  //a listener that listens to ctrl+D must be implemented here
-        String[] line = scan.nextLine().split(" ");
-        for (String numb : line){
-        	numbers.add(Integer.parseInt(numb));
+        scan = new Scanner(System.in);  //a listener that listens to ctrl+D must be implemented here        
+        while (scan.hasNextInt()){
+        	numbers.add(scan.nextInt());
         }
         Runtime.getRuntime().addShutdownHook(new Thread( () -> {
+        	System.out.println(" ");
         	sort(numbers);
         }));
     }

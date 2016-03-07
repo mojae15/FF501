@@ -13,7 +13,6 @@ public class PQHeap implements PQ{
 
 	@Override
 	public Element extractMin() {
-		// TODO Auto-generated method stub
 		try{
 			System.out.println(Queue.get(Queue.size()-1).key);
 			Queue.remove(Queue.size()-1);
@@ -23,7 +22,6 @@ public class PQHeap implements PQ{
 
 	@Override
 	public void insert(Element e) {
-		// TODO Auto-generated method stub
 		final int temp = Queue.size();
 		try{
 			synchronized (this){
@@ -93,7 +91,6 @@ public class PQHeap implements PQ{
 		try {
 			Heap_Increase_Key(A, temp, key);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
