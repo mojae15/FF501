@@ -3,16 +3,14 @@ import java.util.Collections;
 
 public class PQHeap implements PQ{
 
-	public ArrayList<Element> Queue; //this is the queue
+	public ArrayList<Element> Queue; 							// Queue used for the heap	
 
 	public PQHeap(int MaxElements){								//constructor
-		synchronized (this){
-			this.Queue = new ArrayList<>(MaxElements);
-		}
+		this.Queue = new ArrayList<>(MaxElements);
 	}
 
 	@Override
-	public Element extractMin() {
+	public Element extractMin() {								// Prints and removes the smallest number in the heap
 		try{
 			System.out.println(Queue.get(Queue.size()-1).key);
 			Queue.remove(Queue.size()-1);
@@ -21,19 +19,17 @@ public class PQHeap implements PQ{
 	}
 
 	@Override
-	public void insert(Element e) {
-		final int temp = Queue.size();
+	public void insert(Element e) {								// Insert an element in the heap at the end of the queue
+		final int temp = Queue.size();							// Index of the of the queue
 		try{
-			synchronized (this){
-				Queue.add(temp, e);
-			}
+			Queue.add(temp, e);	
 		}catch(ArrayIndexOutOfBoundsException k){
 			System.out.println("The queue can not hold any more elements");
 		}
 
 	}
 
-	public static void build_Min_Heap(ArrayList<Element> A){
+	public static void build_Min_Heap(ArrayList<Element> A){	// Create the min heap, by calling Min_heapify multiple times
 		for(int i = (int)Math.floor(A.size()-1); i>=0; i--){
 			Min_heapify(A, i);
 		}
@@ -82,7 +78,7 @@ public class PQHeap implements PQ{
 	}
 	
 	private static void Min_Heap_Insert(ArrayList<Element> A, int key){
-		int temp = A.size();					//lav maaske om til blot temp = A.size(), da arraylist er nul-indekseret
+		int temp = A.size();					
 		try{
 			A.get(temp).key= Integer.MIN_VALUE;
 		}catch(ArrayIndexOutOfBoundsException k){
@@ -95,15 +91,15 @@ public class PQHeap implements PQ{
 		}
 	}
 	
-	private static int Parent(int i){				//rettet til
+	private static int Parent(int i){				// Returns the index of the parent of the Element
 		return (int)Math.ceil(i/2)-1;
 	}
 	
-	private static int Left(int i){
+	private static int Left(int i){					// Returns the left index of the Element
 		return (int)Math.ceil(2*i)+1;
 	}
 	
-	private static int Right(int i){
+	private static int Right(int i){				// Returns the right index of the Element
 		return (int)Math.ceil((2*i)+2);
 	}
 }
