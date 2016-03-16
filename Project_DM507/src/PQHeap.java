@@ -35,30 +35,30 @@ public class PQHeap implements PQ{
 		}
 	}
 
-	public static void Min_heapify(ArrayList<Element> A, int i){ //changed <Integer> to <Element>
-		int l = Left(i);
+	public static void Min_heapify(ArrayList<Element> A, int i){ 
+		int l = Left(i);										
 		int r = Right(i);
 		int smallest;
-		if (l < A.size() && A.get(l).key <= A.get(i).key) { //skift maaske til l < A.size()
-			smallest = l;
+		if (l < A.size() && A.get(l).key <= A.get(i).key) { 	// Compares the key of the left element to the parent, and sets
+			smallest = l;										// "smallest" to hold the smallest of the two.
 		}
 		else {
 			smallest = i;
 		}
-		if (r < A.size() && A.get(r).key <= A.get(smallest).key) { //skift maaske til r < A.size()
-			smallest = r;
+		if (r < A.size() && A.get(r).key <= A.get(smallest).key) { 	// Compares the key of the right element to the key of the
+			smallest = r;											// smallest element, and changes "smallest" accodingly.
 		}
-		if (smallest != i) {
-			Collections.swap(A, i, smallest);
-			Min_heapify(A, smallest);
+		if (smallest != i) {									// If the smallest element of the parent, left and right was not the paren
+			Collections.swap(A, i, smallest);					// swap i and the smallest, since i is larger than it
+			Min_heapify(A, smallest);							// Call Min_heapify recursively until we have gone through the whole list.
 		}
 	}
 	
-	private static Element Heap_Extract_Min(ArrayList<Element> A) throws Exception{  //changed <Integer> to <Element>
-		if (A.size() <= 1) {								//skift maaske til A.size() <= 1
-			throw new Exception("Heap underflow");
+	private static Element Heap_Extract_Min(ArrayList<Element> A) throws Exception{  
+		if (A.size() <= 1) {									// If the Heap has a size of 1 or less, there is no need to 
+			throw new Exception("Heap underflow");				// do this, and an error occurs.
 		}
-		Element min = A.get(0);
+		Element min = A.get(0);	
 		Element max = A.get(A.size()-1);
 		A.set(0, max);
 		A.remove(A.size()-1);
@@ -68,12 +68,12 @@ public class PQHeap implements PQ{
 	
 	private static void Heap_Increase_Key(ArrayList<Element> A, int i, int key) throws Exception{
 		if (key <= A.get(i).key) {
-			throw new Exception("New key smaller than current key");
+			throw new Exception("New key larger than current key");
 		}
 		A.get(i).key = key;
-		while (i >= 1 && A.get(Parent(i)).key >= A.get(i).key){				//skift maaske til i >= 1
-			Collections.swap(A, i, Parent(i));
-			i = Parent(i);
+		while (i >= 1 && A.get(Parent(i)).key >= A.get(i).key){				// We swap the elements if the parents are larger
+			Collections.swap(A, i, Parent(i));								// than their children
+			i = Parent(i);													// And set a new i to compare the elements to.
 		}
 	}
 	
