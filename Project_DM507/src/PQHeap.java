@@ -1,5 +1,11 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Queue;
+import java.util.concurrent.ExecutionException;
+
+/**
+ * Created by Kasper Skov Johansen (kajo14@studen.sdu.dk) and Morten Kristian Jæger (mojae15@student.sdu.dk)
+ */
 
 public class PQHeap implements PQ{
 
@@ -46,7 +52,7 @@ public class PQHeap implements PQ{
 			smallest = i;
 		}
 		if (r < A.size() && A.get(r).key <= A.get(smallest).key) { 	// Compares the key of the right element to the key of the
-			smallest = r;											// smallest element, and changes "smallest" accodingly.
+			smallest = r;											// smallest element, and changes "smallest" accordingly.
 		}
 		if (smallest != i) {									// If the smallest element of the parent, left and right was not the paren
 			Collections.swap(A, i, smallest);					// swap i and the smallest, since i is larger than it
@@ -54,7 +60,7 @@ public class PQHeap implements PQ{
 		}
 	}
 	
-	private static Element Heap_Extract_Min(ArrayList<Element> A) throws Exception{  
+	private static Element Heap_Extract_Min(ArrayList<Element> A) throws Exception{  //extracts minimum element of a sorted heap
 		if (A.size() <= 1) {									// If the Heap has a size of 1 or less, there is no need to 
 			throw new Exception("Heap underflow");				// do this, and an error occurs.
 		}
@@ -66,28 +72,20 @@ public class PQHeap implements PQ{
 		return min;
 	}
 	
-	private static void Heap_Increase_Key(ArrayList<Element> A, int i, int key) throws Exception{
-		if (key <= A.get(i).key) {
-			throw new Exception("New key larger than current key");
+
+	
+	private static void Min_Heap_Insert(ArrayList<Element> A, int key, Element e)throws Exception{ //Inserts an element in a heap
+		try{
+			A.add(A.size(), e);
+		}catch(ArrayIndexOutOfBoundsException k){System.out.println("Array is out of bounds");
+		int i = A.size();
+		if (key >= A.get(i).key) {
+			throw new Exception("New key is larger than current key");
 		}
-		A.get(i).key = key;
-		while (i >= 1 && A.get(Parent(i)).key >= A.get(i).key){				// We swap the elements if the parents are larger
+		while (i >= 1 && A.get(Parent(i)).key <= A.get(i).key){				// We swap the elements if the parents are larger
 			Collections.swap(A, i, Parent(i));								// than their children
 			i = Parent(i);													// And set a new i to compare the elements to.
 		}
-	}
-	
-	private static void Min_Heap_Insert(ArrayList<Element> A, int key){
-		int temp = A.size();					
-		try{
-			A.get(temp).key= Integer.MIN_VALUE;
-		}catch(ArrayIndexOutOfBoundsException k){
-			System.out.println("The queue can not hold any more elements");
-		}
-		try {
-			Heap_Increase_Key(A, temp, key);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
