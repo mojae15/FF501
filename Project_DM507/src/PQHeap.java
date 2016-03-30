@@ -4,7 +4,7 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Kasper Skov Johansen (kajo14@studen.sdu.dk) and Morten Kristian Jæger (mojae15@student.sdu.dk)
+ * Created by Kasper Skov Johansen (kajoh14@studen.sdu.dk) and Morten Kristian Jæger (mojae15@student.sdu.dk)
  */
 
 public class PQHeap implements PQ{

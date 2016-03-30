@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 
 /**
- * Created by Kasper Skov Johansen (kajo14@studen.sdu.dk) and Morten Kristian Jæger (mojae15@student.sdu.dk)
+ * Created by Kasper Skov Johansen (kajoh14@student.sdu.dk) and Morten Kristian Jæger (mojae15@student.sdu.dk)
  */
 public class HeapSort {
     private static PQHeap heap = new PQHeap(100);                //max heap-size is 100; can be changed, though
