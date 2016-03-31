@@ -1,43 +1,45 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Queue;
-import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Kasper Skov Johansen (kajoh14@studen.sdu.dk) and Morten Kristian Jæger (mojae15@student.sdu.dk)
+ * Created by:
+ * Kasper Skov Johansen (kajoh14@student.sdu.dk)
+ * Morten Kristian Jæger (mojae15@student.sdu.dk)
  */
-
 public class PQHeap implements PQ{
 
-	public ArrayList<Element> Queue; 							// Queue used for the heap	
+	public static ArrayList<Element> Queue; 							// Queue used for the heap
 
 	public PQHeap(int MaxElements){								//constructor
 		this.Queue = new ArrayList<>(MaxElements);
 	}
 
 	@Override
-	public Element extractMin() {								// Prints and removes the smallest number in the heap
+	public Element extractMin() {	
 		try{
-			System.out.println(Queue.get(Queue.size()-1).key);
+			Element min = Queue.get(0);
+			Element max = Queue.get(Queue.size()-1);
+			Queue.set(0, max);
 			Queue.remove(Queue.size()-1);
-		}catch(ArrayIndexOutOfBoundsException k){System.out.println("No elements in queue");}
+			Min_heapify(Queue, 0);
+			return min;
+		}catch(ArrayIndexOutOfBoundsException k){
+			System.out.println("No elements in queue");
+		}
 		return null;
 	}
 
 	@Override
-	public void insert(Element e) {								// Insert an element in the heap at the end of the queue
-		final int temp = Queue.size();							// Index of the of the queue
-		try{
-			Queue.add(temp, e);	
-		}catch(ArrayIndexOutOfBoundsException k){
-			System.out.println("The queue can not hold any more elements");
+	public void insert(Element e) {
+		int i = Queue.size();
+		try {
+			Queue.add(e);				
+		} catch (ArrayIndexOutOfBoundsException k) {
+			System.out.println("Array is out of bounds");
 		}
-
-	}
-
-	public static void build_Min_Heap(ArrayList<Element> A){	// Create the min heap, by calling Min_heapify multiple times
-		for(int i = (int)Math.floor(A.size()-1); i>=0; i--){
-			Min_heapify(A, i);
+		while (i > 0 && Queue.get(Parent(i)).key >= Queue.get(i).key) {
+			Collections.swap(Queue, i, Parent(i));                                
+			i = Parent(i);                                                    
 		}
 	}
 
@@ -60,44 +62,26 @@ public class PQHeap implements PQ{
 		}
 	}
 	
-	private static Element Heap_Extract_Min(ArrayList<Element> A) throws Exception{  //extracts minimum element of a sorted heap
-		if (A.size() <= 1) {									// If the Heap has a size of 1 or less, there is no need to 
-			throw new Exception("Heap underflow");				// do this, and an error occurs.
-		}
-		Element min = A.get(0);	
-		Element max = A.get(A.size()-1);
-		A.set(0, max);
-		A.remove(A.size()-1);
-		Min_heapify(A, 0);
-		return min;
+	/**
+	 * Returns the parent
+	 * Example using the root's left child: ceil(1/2.)-1 = 0, which is the root's index
+	 */
+	private static int Parent(int i){
+		return (int)Math.ceil(i/2.)-1;
 	}
 	
-
-	
-	private static void Min_Heap_Insert(ArrayList<Element> A, int key, Element e)throws Exception{ //Inserts an element in a heap
-		try{
-			A.add(A.size(), e);
-		}catch(ArrayIndexOutOfBoundsException k){System.out.println("Array is out of bounds");
-		int i = A.size();
-		if (key >= A.get(i).key) {
-			throw new Exception("New key is larger than current key");
-		}
-		while (i >= 1 && A.get(Parent(i)).key <= A.get(i).key){				// We swap the elements if the parents are larger
-			Collections.swap(A, i, Parent(i));								// than their children
-			i = Parent(i);													// And set a new i to compare the elements to.
-		}
-		}
-	}
-	
-	private static int Parent(int i){				// Returns the index of the parent of the Element
-		return (int)Math.ceil(i/2)-1;
-	}
-	
-	private static int Left(int i){					// Returns the left index of the Element
+	/**
+	 * Returns the left child in the 0-indexed queue
+	 * Excample by using the root: (2*0)+1 = 1, which is the left child
+	 */
+	private static int Left(int i){					
 		return (int)Math.ceil(2*i)+1;
 	}
-	
-	private static int Right(int i){				// Returns the right index of the Element
+	/**
+	 * Returns the right child in the 0-indexed queue
+	 * Excample by using the root: (2*0)+2 = 2, which is the right child
+	 */
+	private static int Right(int i){				
 		return (int)Math.ceil((2*i)+2);
 	}
 }

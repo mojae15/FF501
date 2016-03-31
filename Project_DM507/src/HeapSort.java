@@ -1,34 +1,27 @@
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
-
 /**
- * Created by Kasper Skov Johansen (kajoh14@student.sdu.dk) and Morten Kristian Jæger (mojae15@student.sdu.dk)
+ * Created by:
+ * Kasper Skov Johansen (kajoh14@student.sdu.dk)
+ * Morten Kristian Jæger (mojae15@student.sdu.dk)
  */
 public class HeapSort {
-    private static PQHeap heap = new PQHeap(100);                //max heap-size is 100; can be changed, though
+	
+	//Temporary heap size
+    private static PQHeap heap = new PQHeap(100);
 
-    static Scanner scan;                                        //scanner
+    //Scanner
+    static Scanner scan;                                        
 
-    public static void sort(ArrayList<Integer> list){ 			// Given a list of integers, it sorts them in min-heap order,
-        														// and prints it out.
-    	
-        for (int i = 0; i < list.size(); i++){					// Given the integer from the ArrayList, creates an element,					
-            heap.insert(new Element(list.get(i), null));		// with the key i, and the data null, as there is no data,
-        }														// and inserts it in the queue in PQHeap
-        
-        heap.build_Min_Heap(heap.Queue);						
-        
-        for (int i = heap.Queue.size()-1; i>0; i--){
-            Collections.swap(heap.Queue, 0, i);
-            heap.extractMin();
-            heap.Min_heapify(heap.Queue, 0);
+    public static void sort(ArrayList<Integer> list){
+        for (int i = 0; i < list.size(); i++){										
+            heap.insert(new Element(list.get(i), null));		
+        }                                                      
+        for (int i = 0; i < list.size(); i++){
+            Element e = heap.extractMin();
+            System.out.println(e.key);
         }
-        heap.extractMin();
-
     }
     
     public static void main(String[] args){
