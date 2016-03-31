@@ -25,10 +25,12 @@ public class HeapSort {
     }
     
     public static void main(String[] args){
-    	ArrayList<Integer> numbers = new ArrayList<>();			// ArrayList used to hold the numbers from the scanner
+    	// ArrayList used to hold the numbers from the scanner
+    	ArrayList<Integer> numbers = new ArrayList<>();			
         scan = new Scanner(System.in);      
-        while (scan.hasNextInt()){								// The scanner runs while there is int input
-        	numbers.add(scan.nextInt());						// Add the numbers to the list
+        // The scanner runs while there is int input
+        while (scan.hasNextInt()){								
+        	numbers.add(scan.nextInt());		
         }
         Runtime.getRuntime().addShutdownHook(new Thread( () -> {	// Add a ShutdownHook that waits for the program to "finish" and then does something, 
         	sort(numbers);											// in this case it sorts and prints the list of numbers.

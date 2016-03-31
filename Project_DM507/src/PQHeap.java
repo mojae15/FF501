@@ -8,9 +8,11 @@ import java.util.Collections;
  */
 public class PQHeap implements PQ{
 
-	public static ArrayList<Element> Queue; 							// Queue used for the heap
+	// Queue used for the heap
+	public static ArrayList<Element> Queue; 						
 
-	public PQHeap(int MaxElements){								//constructor
+	//constructor
+	public PQHeap(int MaxElements){								
 		this.Queue = new ArrayList<>(MaxElements);
 	}
 
