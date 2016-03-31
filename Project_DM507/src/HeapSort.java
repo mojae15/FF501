@@ -18,7 +18,7 @@ public class HeapSort {
         for (int i = 0; i < list.size(); i++){										
             heap.insert(new Element(list.get(i), null));		
         }                                                      
-        for (int i = 0; i < list.size(); i++){
+        for (int i :list){
             Element e = heap.extractMin();
             System.out.println(e.key);
         }
