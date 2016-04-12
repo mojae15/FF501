@@ -10,24 +10,32 @@ public class DictBinTree implements  Dict {
     ArrayList<Integer> Holder = new ArrayList<>();
     private int[] test;
 
+    /**
+     * Constructor
+     */
     public DictBinTree(){
         root = null;
         TreeSize = 0;
         int [] tree = new int[TreeSize];
     }
 
+    /**
+     * Creates a new knud with the key k.
+     * If the root does not exist, the knud we just created will be inserted as the root.
+     * Else, the knud is inserted into the appropriate place in the tree.
+     */
     @Override
     public void insert(int k){
         Knud z = new Knud(null, null, k);
-        Knud temp = null;
+        Knud y = null;
         if(root==null){
-            root = new Knud(null, null, k);
+            root = z;
             TreeSize++;
             return;
         }
         Knud x = root;
         while(x!=null){
-            temp = x;
+            y = x;
             if (z.key < x.key){
                 x = x.left;
             }
@@ -35,12 +43,12 @@ public class DictBinTree implements  Dict {
                 x = x.right;
             }
         }
-        if (z.key < temp.key){
-            temp.left = z;
+        if (z.key < y.key){
+            y.left = z;
             TreeSize++;
         }
         else {
-            temp.right = z;
+            y.right = z;
             TreeSize++;
         }
         
@@ -63,11 +71,15 @@ public class DictBinTree implements  Dict {
 		}
         return test;
     }
-
-    @Override
-    public boolean search(int k) {
-        Knud x = root;
-        while (x.key != null && k!=x.key) {
+    
+    /**
+     * Searches through the tree, iteratively
+     * @param k
+     * @return
+     */
+    private boolean Search(int k){
+    	Knud x = root;
+        while (x.key != null && k != x.key) {
             if(k < x.key){
                 x = x.left;
             }else{
@@ -78,5 +90,10 @@ public class DictBinTree implements  Dict {
             return true;
         }
         return false;
+    }
+    
+    @Override
+    public boolean search(int k) {
+    	return Search(k);
     }
 }
