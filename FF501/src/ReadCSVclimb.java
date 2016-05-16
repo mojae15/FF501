@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -78,8 +77,6 @@ public class ReadCSVclimb {
 			}
 			out.writeObject(climb);
 			out.close();
-			
-			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

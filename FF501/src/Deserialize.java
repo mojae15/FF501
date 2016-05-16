@@ -12,13 +12,20 @@ import java.util.Scanner;
 public class Deserialize {
 
 	public static void main(String[] args) {
-		Climb d = null;
+		
 		
 		FileInputStream ip;
 		try {
 			ip = new FileInputStream("/Users/mortenjaeger/Dropbox/Uni/Datalogi/FF501/Data/Data/ACP/Falcon 7x/climb.ser");
 			ObjectInputStream in = new ObjectInputStream(ip);
-			d = (Climb)in.readObject();
+			Climb[][] d = (Climb[][])in.readObject();
+			
+			Climb c = d[33][6];
+			
+			System.out.println(c.distance+" "+c.time+" "+c.fuel);
+			
+			//System.out.println(d[0][0].distance);
+			
 			in.close();
 			ip.close();
 		} catch (FileNotFoundException e) {
