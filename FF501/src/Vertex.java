@@ -1,8 +1,10 @@
+import java.io.Serializable;
+
 /**
  * Created by Morten Jaeger on 09/05/2016
  * Email: mojae15@student.sdu.dk
  */
-public class Vertex {
+public class Vertex implements Serializable{
 	public int row;
 	public int col;
 	public double cost;
