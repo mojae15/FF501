@@ -9,6 +9,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -29,6 +30,7 @@ public class SerRoutes {
 	private static int pWeight = 1;
 	private static Graph graph;
 	private static List<Double> distances = new LinkedList<>();
+	private static List<Double> test = new ArrayList<>();
 	
 	public static void main(String[] args){
 		nodes = new LinkedList<>();
@@ -37,6 +39,7 @@ public class SerRoutes {
 		Path dir = Paths.get("/Users/mortenjaeger/Dropbox/Uni/Datalogi/Java/FF501/Routes/");
 		deserialize();
 		searchDir(dir);
+		System.out.println(test.size());
 	}
 	
 	public static void searchDir(Path dir){
@@ -51,7 +54,6 @@ public class SerRoutes {
 				}
 				else{
 					if(path.toString().endsWith(".txt")){
-						System.out.println("Checking file "+path);
 						readFile(path);
 						clearAll();
 					}
@@ -72,10 +74,8 @@ public class SerRoutes {
 	public static void readFile(Path path){
 		String[] name = path.toString().split("/");
 		String file = name[name.length-1];
-		System.out.println(file);
 		String[] fName = file.split("txt");
 		String dest = "/Users/mortenjaeger/Dropbox/Uni/Datalogi/Java/FF501/"+fName[0]+"ser";
-		System.out.println("Destination file: "+dest);
 		graph = new Graph(null, null);
 		distances(path.toFile());
 		graph.setVertexes(nodes);
@@ -157,38 +157,77 @@ public class SerRoutes {
 			}
 		}
 		
+		Climb a = climb[1][pWeight];
+		double cTime = a.time;
+		
+		Descent b = descent[49][pWeight];
+		double dTime = b.time;
+		
 		for(int i = 0; i < count-1; i++){
 			double distance = distances.get(i);
 			for(int j = 0; j < 50; j++){
 				if(i != 0 && j == 0){
 					j = 1;
 				}
+				
+				Climb prevC = climb[j][pWeight];
+				double prevCtime = (prevC.time/60)*1000;
+				double fuelC = (prevC.fuel/6.2)*3;
+				double prevCcost = prevCtime+fuelC;
+				
+				if(prevC.distance < distance){
+					double tempDist = distance - prevC.distance; 
+					prevCcost = prevCcost + cruise(tempDist, j);
+				}
+				
+				Descent prevD = descent[j][pWeight];
+				double prevDtime = (prevD.time/60)*1000;
+				double fuelD = (prevD.fuel/6.2)*3;
+				double prevDcost = prevDtime+fuelD;
+				
+				if(prevD.distance < distance){
+					double tempDist = distance - prevD.distance; 
+					prevDcost = prevDcost + cruise(tempDist, j);
+				}
+				
 				for(int n = 0; n < 50; n++){
 					if(i != count-2 && n == 0){
 						n = 1;
 					}
+					
 					if(n == j){
-						double time = distance/cruise[j][pWeight].speed;
-						double cost = (time*1000)+((cruise[j][pWeight].fuelFlow*time)*3);
-						addEdge("", points[i][j], points[i+1][n], cost);
+						Cruise c = cruise[j][pWeight];
+						if(c.fuelFlow > 0){
+							double time = distance/c.speed;
+							double cost = (time*1000)+(((c.fuelFlow*time)/6.2)*3);
+							addEdge("", points[i][j], points[i+1][n], cost);
+						}
 					}
 					else if(n < j){
-						Descent d = descent[j][pWeight];
-						if(d.distance < distance){
-							double time = d.time*1000;
-							double cost = time+(d.fuel*3);
-							addEdge("", points[i][j], points[i+1][n], cost);
-							
-						}
+						Descent d = descent[n][pWeight];
+						//if(d.fuel > 0){
+							if(d.distance < distance){
+								double time = (dTime/60)*1000;
+								double fuel = (d.fuel/6.2)*3;
+								double cost = time+fuel;
+								double restDist = distance - d.distance;
+								cost = (cost + cruise(restDist, j))-prevDcost;
+								addEdge("", points[i][j], points[i+1][n], cost);
+							}
+						//}
 					}
 					else if(n > j){
-						Climb c = climb[j][pWeight];
-						if(c.distance < distance){
-							double time = c.time*1000;
-							double cost = time+(c.fuel*3);
-							addEdge("", points[i][j], points[i+1][n], cost);
-							
-						}
+						Climb c = climb[n][pWeight];
+						//if( c.fuel > 0){
+							if(c.distance < distance){
+								double time = (cTime/60)*1000;
+								double fuel = (c.fuel/6.2)*3;
+								double cost = time+fuel;
+								double restDist = distance - c.distance;
+								cost = prevCcost - (cost + cruise(restDist, n));
+								addEdge("", points[i][j], points[i+1][n], cost);
+							}
+						//}
 					}
 					
 				}
@@ -197,6 +236,18 @@ public class SerRoutes {
 		graph.setCount(count);
 		graph.setPoints(points);
 	}
+	
+	public static double cruise(double dist, int FL){
+		Cruise c = cruise[FL][pWeight];
+		if(c.fuelFlow > 0){
+			double time = dist/c.speed;
+			double cost = (time*1000)+(((c.fuelFlow*time)/6.2)*3);
+			return cost;
+		}
+		return 0;
+	}
+	
+	
 	
 	public static void deserialize(){
 		deserializeClimb();

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by Morten Jaeger on 13/05/2016
@@ -13,25 +12,15 @@ import java.util.Scanner;
  */
 public class Tester {
 
-	private static List<Vertex> nodes;
-	private static List<Edge> edges;
-	private static Climb[][] climb;
-	private static Descent[][] descent;
-	private static Cruise[][] cruise;
-	private static weightLimits[] weight;
 	private static FileInputStream fp;
-	private static ObjectInputStream in;
 	private static Vertex[][] points;
 	private static int count;
 	private static Graph graph;
-	private static int pWeight = 1;
 	private static List<Double> distances = new LinkedList<>();
 	
 	public static void main(String[] args) {
 		
-		nodes = new LinkedList<>();
-		edges = new LinkedList<>();
-		File file = new File("EBBR-VABB-40.ser");
+		File file = new File("EBBR-ESSA-138.ser");
 		//initAll(file);
 		
 		//graph = new Graph(nodes, edges);
@@ -51,8 +40,6 @@ public class Tester {
 			e.printStackTrace();
 		}
 		
-		
-		
 		Dijkstra dijkstra = new Dijkstra(graph);
 		points = graph.getPoints();
 		count = graph.getCount();
@@ -60,11 +47,13 @@ public class Tester {
 		Vertex end = points[count-1][0];
 		dijkstra.run(start);
 		List<Vertex> path = dijkstra.getPath(end);
-		
+		double pathCost = 0;
 		if (path != null && path.size() > 0) {
 			for(Vertex v: path){
-				System.out.println("Point "+v.row+" FL "+v.col*10);
+				pathCost = pathCost + v.getCost();
+				System.out.println("Point "+v.row+" FL "+v.col*10+" Cost: "+v.getCost());
 			}
+			System.out.println("Cost for flight: "+pathCost);
 		}
 	}
 
