@@ -9,6 +9,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,10 +28,11 @@ public class SerRoutes {
 	private static ObjectInputStream in;
 	private static ObjectOutputStream out;
 	private static FileOutputStream fo;
-	private static int pWeight = 1;
+	private static int pWeight = 3;
 	private static Graph graph;
 	private static List<Double> distances = new LinkedList<>();
 	private static List<Double> test = new ArrayList<>();
+	private static List<Double> test2 = new ArrayList<>();
 	
 	public static void main(String[] args){
 		nodes = new LinkedList<>();
@@ -40,6 +42,7 @@ public class SerRoutes {
 		deserialize();
 		searchDir(dir);
 		System.out.println(test.size());
+		System.out.println(test2.size());
 	}
 	
 	public static void searchDir(Path dir){
@@ -157,94 +160,107 @@ public class SerRoutes {
 			}
 		}
 		
-		Climb a = climb[1][pWeight];
-		double cTime = a.time;
-		
-		Descent b = descent[49][pWeight];
-		double dTime = b.time;
-		
 		for(int i = 0; i < count-1; i++){
 			double distance = distances.get(i);
-			for(int j = 0; j < 50; j++){
-				if(i != 0 && j == 0){
-					j = 1;
-				}
-				
-				Climb prevC = climb[j][pWeight];
-				double prevCtime = (prevC.time/60)*1000;
-				double fuelC = (prevC.fuel/6.2)*3;
-				double prevCcost = prevCtime+fuelC;
-				
-				if(prevC.distance < distance){
-					double tempDist = distance - prevC.distance; 
-					prevCcost = prevCcost + cruise(tempDist, j);
-				}
-				
-				Descent prevD = descent[j][pWeight];
-				double prevDtime = (prevD.time/60)*1000;
-				double fuelD = (prevD.fuel/6.2)*3;
-				double prevDcost = prevDtime+fuelD;
-				
-				if(prevD.distance < distance){
-					double tempDist = distance - prevD.distance; 
-					prevDcost = prevDcost + cruise(tempDist, j);
-				}
-				
-				for(int n = 0; n < 50; n++){
-					if(i != count-2 && n == 0){
-						n = 1;
+			if(i == 0){
+				for(int n = 1; n < 50; n++){
+					Climb c = climb[n][pWeight];
+					if(c.distance < distance){
+						double time = (c.time/60)*1000;
+						double fuel = (c.fuel/6.2)*3;
+						double cost = time+fuel;
+						double restDist = distance - c.distance;
+						cost = cost + cruise(restDist, n);
+						addEdge("", points[i][0], points[i+1][n], cost);
 					}
+				}
+			}
+			else{
+				for(int j = 1; j < 50; j++){
+					if(checkWeight(pWeight, j)){
+						Climb prevClimb = climb[j][pWeight];
+						double prevCtime = 0;
+						double prevCfuel = 0;
+						double prevCcost = 0;
+						prevCtime = (prevClimb.time/60)*1000;
+						prevCfuel = (prevClimb.fuel/6.2)*3;
+						prevCcost = prevCtime+prevCfuel;
 					
-					if(n == j){
-						Cruise c = cruise[j][pWeight];
-						if(c.fuelFlow > 0){
-							double time = distance/c.speed;
-							double cost = (time*1000)+(((c.fuelFlow*time)/6.2)*3);
-							addEdge("", points[i][j], points[i+1][n], cost);
+						Descent prevDescent = descent[j][pWeight];
+						double prevDtime = 0;
+						double prevDfuel = 0;
+						double prevDcost = 0;
+						prevDtime = (prevDescent.time/60)*1000;
+						prevDfuel = (prevDescent.fuel/6.2)*3;
+						prevDcost = prevDtime+prevDfuel;
+					
+						for(int n = 0; n < 50; n++){
+							if(i != count-2 && n == 0){
+								n = 1;
+							}
+							if(checkWeight(pWeight, n)){
+								if(j == n){
+									double cost = cruise(distance, j);
+									addEdge("", points[i][j], points[i+1][n], cost);
+								}
+								else if(j < n){
+									Climb c = climb[n][pWeight];
+									if(c.distance < distance){
+										double time = (c.time/60)*1000;
+										double fuel = (c.fuel/6.2)*3;
+										double restDist = distance - c.distance;
+										double cost = time+fuel;
+										cost = (cost - prevCcost) + cruise(restDist, n);
+										if (cost < 0) {
+											test.add(cost);
+										}
+										addEdge("", points[i][j], points[i+1][n], cost);
+									}
+								}
+								else if(j > n){
+									Descent d = descent[n][pWeight];
+									if(d.distance < distance){
+										double time = (d.time/60)*1000;
+										double fuel = (d.fuel/6.2)*3;
+										double cost = time+fuel;
+										double restDist = distance - d.distance;
+										double temp = cost;
+										cost = (prevDcost - cost) + cruise(restDist, j);
+										if(cost < 0){
+											//System.out.println(cruise(restDist, j));
+											test2.add(cost);
+										}
+										addEdge("", points[i][j], points[i+1][n], cost);
+									}
+								}
+							}
 						}
-					}
-					else if(n < j){
-						Descent d = descent[n][pWeight];
-						//if(d.fuel > 0){
-							if(d.distance < distance){
-								double time = (dTime/60)*1000;
-								double fuel = (d.fuel/6.2)*3;
-								double cost = time+fuel;
-								double restDist = distance - d.distance;
-								cost = (cost + cruise(restDist, j))-prevDcost;
-								addEdge("", points[i][j], points[i+1][n], cost);
-							}
-						//}
-					}
-					else if(n > j){
-						Climb c = climb[n][pWeight];
-						//if( c.fuel > 0){
-							if(c.distance < distance){
-								double time = (cTime/60)*1000;
-								double fuel = (c.fuel/6.2)*3;
-								double cost = time+fuel;
-								double restDist = distance - c.distance;
-								cost = prevCcost - (cost + cruise(restDist, n));
-								addEdge("", points[i][j], points[i+1][n], cost);
-							}
-						//}
-					}
 					
+					}
 				}
-			}			
+			}
 		}
+		
 		graph.setCount(count);
 		graph.setPoints(points);
 	}
 	
 	public static double cruise(double dist, int FL){
 		Cruise c = cruise[FL][pWeight];
-		if(c.fuelFlow > 0){
-			double time = dist/c.speed;
-			double cost = (time*1000)+(((c.fuelFlow*time)/6.2)*3);
-			return cost;
+		double time = (dist/c.speed);
+		double cost = (time*1000)+(((c.fuelFlow*time)/6.2)*3);
+		return cost;
+	}
+	
+	public static boolean checkWeight(double w, int FL){
+		weightLimits maxWeight = weight[FL];
+		w = 4000*(w+1)+29000;
+		if(w <= maxWeight.weight){
+			return true;
 		}
-		return 0;
+		else {
+			return false;
+		}
 	}
 	
 	

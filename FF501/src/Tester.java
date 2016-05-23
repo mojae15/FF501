@@ -21,22 +21,18 @@ public class Tester {
 	public static void main(String[] args) {
 		
 		File file = new File("EBBR-ESSA-138.ser");
-		//initAll(file);
-		
-		//graph = new Graph(nodes, edges);
-		
 		try {
 			fp = new FileInputStream(file);
 			ObjectInputStream in = new ObjectInputStream(fp);
 			graph = (Graph) in.readObject();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (IOException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		

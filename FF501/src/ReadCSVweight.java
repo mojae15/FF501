@@ -47,6 +47,7 @@ public static String csvSplit = ";";
 			 * 8 = 65000
 			 * 9 = 69000
 			 * 10 = 73000
+			 * Formula: 4000*x+29000
 			 */
 			
 			/**

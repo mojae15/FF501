@@ -32,12 +32,14 @@ public class Dijkstra {
 		pq = new PQHeap(nodes.size());
 		start.setCost(0);
 		pq.insert(start);
+		
+		
 		while(pq.getSize() > 0){
 			Vertex vertex = pq.extractMin();
 			doneNodes.add(vertex);
 			expand(vertex);
 		}
-
+		
 		/**
 		for(Vertex v: nodes){
 			if(v != start){
@@ -79,7 +81,6 @@ public class Dijkstra {
 	
 	public double getShortest(Vertex v){
 		double d = v.getCost();
-		
 		if(d < 0){
 			return Double.MAX_VALUE;
 		}
@@ -120,8 +121,7 @@ public class Dijkstra {
 
 	public double getDistance(Vertex source, Vertex target){
 		for(Edge edge : edges){
-			if((edge.getSource().equals(source) && edge.getDestination().equals(target))
-					|| (edge.getSource().equals(target) && edge.getDestination().equals(target))){
+			if(edge.getSource().equals(source) && edge.getDestination().equals(target)){
 				return edge.getCost();
 			}
 		}
